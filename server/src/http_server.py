@@ -1,6 +1,8 @@
 from flask import Flask, Response, request
 from flask_classful import FlaskView, route
+
 from .payload_handler import PayloadHandler
+from .http_helper import B64SCCrypto
 from .loghandler import LogHandler
 import logging
 
@@ -49,6 +51,7 @@ class GTSServer(FlaskView):
     def __init__(self):
         self.token = 'c9KcX1Cry3QKS2Ai7yxL6QiQGeBGeQKR'
         self.payload_handler = PayloadHandler()
+        self.b64sc = B64SCCrypto()
 
     @route('/info.asp', methods=['GET'])
     def info(self):
@@ -61,6 +64,9 @@ class GTSServer(FlaskView):
 
     @route('/post.asp', methods=['GET'])
     def post(self):
+        data = self.b64sc.decrypt(request.args.get('data'))
+        gts_logging.info(f"POST data: {data.hex()}")
+        self.payload_handler.handle_post(data)
         return GTSResponse(b'\x0c\x00')
 
     @route('/search.asp', methods=['GET'])
