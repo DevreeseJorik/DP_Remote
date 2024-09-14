@@ -69,8 +69,7 @@ class GTSServer(FlaskView):
 
     @route('/result.asp', methods=['GET'])
     def result(self):
-        payload_choice = input('Enter payload path: ')
-        payload = self.payload_handler.get_payload(payload_choice)
+        payload = self.payload_handler.get_payload()
         return GTSResponse(payload)
 
     @route('/delete.asp', methods=['GET'])

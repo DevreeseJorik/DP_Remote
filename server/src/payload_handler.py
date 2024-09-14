@@ -10,8 +10,9 @@ class PayloadHandler():
     def set_payload_length(self, length):
         self._payload_length = length
 
-    def get_payload(self, choice):
+    def get_payload(self):
         try:
+            choice = input("Path to the payload file: ")
             with open(choice, 'rb') as f:
                 resp = f.read()
                 resp = resp.ljust(self._payload_length, b'\x00')
