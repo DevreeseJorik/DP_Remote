@@ -48,6 +48,7 @@ class GTSServer(FlaskView):
 
     def __init__(self):
         self.token = 'c9KcX1Cry3QKS2Ai7yxL6QiQGeBGeQKR'
+        self.payload_handler = PayloadHandler()
         self.b64sc = B64SCCrypto()
 
     @route('/info.asp', methods=['GET'])
