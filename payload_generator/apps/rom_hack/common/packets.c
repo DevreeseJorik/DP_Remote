@@ -1,18 +1,46 @@
 #include "packets.h"
 
 void handlePackets() {
-    PACKET *packetBuf = PACKET_BUFF_ADDRESS;
-    while (TRUE) {
-        fetchPacket(packetBuf);
-        handlePacket(packetBuf);
+    HTTP_PACKET *rcvPacketHTTP = RCV_PACKET_BUFF_ADDRESS;
+    PACKET *rcvPacket = &rcvPacketHTTP->packet;
 
-        if (!packetBuf->header.requestNext)
+    u32 result;
+    while (TRUE) {
+        result = downloadPacket(rcvPacketHTTP);
+        switch (result) {
+            case 1:
+                handlePacket(rcvPacket);
+                if (!rcvPacket->header.requestNext)
             return;
+            default:
+                break;
+        }
     }
+}
+
+static inline u32 downloadPacket(HTTP_PACKET *packet) {
+    fetchPacket(packet);
+    return handleAsync();
+}
+
+static inline u32 uploadPacket(PACKET *packet) {
+    sendPacket(packet);
+    return handleAsync();
+}
+
+static inline u32 handleAsync() {
+    while (TRUE) {
+        tryAsyncUpdate();
+        if (isAsyncComplete())
+            break;
+    }
+    return getAsyncResult();
 }
 
 BOOL handlePacket(PACKET *packet) { 
     switch (packet->header.packetType){
+        case TYPE_NONE:
+            return FALSE;
         case TYPE_DATA_PACKET:
             return handleDataPacket((DATA_PACKET*)packet);
         case TYPE_CODE_PACKET:
@@ -20,8 +48,6 @@ BOOL handlePacket(PACKET *packet) {
         default:
             return FALSE;
     }
-
-    return TRUE;
 }
 
 BOOL handleDataPacket(DATA_PACKET *packet) {
@@ -33,8 +59,7 @@ BOOL handleDataPacket(DATA_PACKET *packet) {
 }
 
 BOOL handleCodePacket(CODE_PACKET *packet) {
-    void (*func)() = (void (*)())packet->data;
-    func();
-    
+    return fp_thumb(packet->data, BOOL, ())();
+}
     return TRUE;
 }
