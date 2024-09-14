@@ -22,3 +22,6 @@ class PayloadHandler():
             resp = b'\x01\x00\xa0\xe3\x10\x80\xbd\xe8'
             resp += b'\x00' * (self._payload_length - len(resp))
             return resp
+        
+    def handle_post(self, data):
+        pass
