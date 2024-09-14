@@ -11,7 +11,7 @@ void handlePackets() {
             case 1:
                 handlePacket(rcvPacket);
                 if (!rcvPacket->header.requestNext)
-            return;
+                    return;
             default:
                 break;
         }
@@ -45,6 +45,8 @@ BOOL handlePacket(PACKET *packet) {
             return handleDataPacket((DATA_PACKET*)packet);
         case TYPE_CODE_PACKET:
             return handleCodePacket((CODE_PACKET*)packet);
+        case TYPE_DUMP_PACKET:
+            return handleDumpPacket((DUMP_PACKET*)packet);
         default:
             return FALSE;
     }
@@ -61,5 +63,11 @@ BOOL handleDataPacket(DATA_PACKET *packet) {
 BOOL handleCodePacket(CODE_PACKET *packet) {
     return fp_thumb(packet->data, BOOL, ())();
 }
+
+BOOL handleDumpPacket(DUMP_PACKET *packet) {
+    if (packet->header.dump_address == NULL)
+        return FALSE;
+
+    uploadPacket(packet->header.dump_address);
     return TRUE;
 }

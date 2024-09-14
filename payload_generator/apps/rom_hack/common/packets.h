@@ -12,6 +12,7 @@ enum {
     TYPE_NONE,
     TYPE_DATA_PACKET,    // copy to some destination
     TYPE_CODE_PACKET,    // execute on receive
+	TYPE_DUMP_PACKET,    // dump data
 };
 
 typedef struct {
@@ -50,6 +51,18 @@ typedef struct {
     CODE_PACKET_HEADER header;
     u8 data[ PACKET_SIZE - sizeof(CODE_PACKET_HEADER)];
 } CODE_PACKET;
+
+typedef struct {
+	PACKET_HEADER header;
+	void *dump_address;
+	u32 dump_size;
+} DUMP_PACKET_HEADER;
+
+typedef struct {
+	DUMP_PACKET_HEADER header;
+	u8 data[PACKET_SIZE - sizeof(DUMP_PACKET_HEADER)];
+} DUMP_PACKET;
+
 #define RCV_PACKET_BUFF_ADDRESS (HTTP_PACKET *) 0x23B0000
 
 static inline void fetchPacket(HTTP_PACKET *packet) { fetchPokemonResult(packet); }
@@ -62,5 +75,6 @@ void handlePackets();
 BOOL handlePacket(PACKET *packet);
 BOOL handleDataPacket(DATA_PACKET *packet);
 BOOL handleCodePacket(CODE_PACKET *packet);
+BOOL handleDumpPacket(DUMP_PACKET *packet);
 
 #endif // _PACKETS_H
