@@ -1,5 +1,7 @@
 from flask import Flask, Response, request
 from flask_classful import FlaskView, route
+
+from .payload_handler import PayloadHandler
 from .http_helper import B64SCCrypto
 from .loghandler import LogHandler
 import logging
