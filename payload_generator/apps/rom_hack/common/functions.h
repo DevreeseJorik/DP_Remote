@@ -2,20 +2,17 @@
 #define _FUNCTIONS_H
 
 #include "common.h"
+#include <stdint.h>
 
-#define fp_memcp 0x020e17b0
-#define memcp(dest, src, n) ((void* (*) (void*, void*, u32))fp_memcp)(dest, src, n)
+#define fp_arm(address, type, param) ((type (*) param)((uintptr_t)(address) & ~1))
+#define fp_thumb(address, type, param) ((type (*) param)((uintptr_t)(address) | 1))
 
-#define fp_fetchPokemonResult 0x02234E68
-#define fetchPokemonResult(dest) ((void* (*) (void*))fp_fetchPokemonResult)(dest)
+#define fp_memcp8 fp_arm(0x20CE3E0, void, (void*, void*, u32))
+static inline void memcp(void* dest, void* src, u32 size) { fp_memcp8(dest, src, size);}
 
-static inline void *memset(void *buf, u8 ch, u32 n)
-{
-    for(int i=0; i<n; i++)
-    {
-        ((u8*)buf)[i] = ch;
-    }
-    return buf;
-}
+#define fp_memset fp_arm(0x20CE34C, void, (void*, u8, u32))
+static inline void memset(void* dest, u8 value, u32 size) { fp_memset(dest, value, size); }
+#define fp_fetchPokemonResult fp_thumb(0x02234E68, u32, (void*))
+static inline u32 fetchPokemonResult(void* rcv_buf) { return fp_fetchPokemonResult(rcv_buf); }
 
 #endif // _FUNCTIONS_H
