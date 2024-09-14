@@ -14,7 +14,7 @@ BUILDDIR		= ./build
 
 CC				= arm-none-eabi-gcc
 AS				= arm-none-eabi-as
-CFLAGS			= -mcpu=arm946e-s -mthumb -Os -nostartfiles -nodefaultlibs -fno-builtin
+CFLAGS			= -mcpu=arm946e-s -mthumb -Os -nostartfiles -nodefaultlibs -fno-builtin -ffunction-sections --data-sections -Wl,--gc-sections
 LDFLAGS			= --specs=nosys.specs -T $(LINKERFILE)
 INC				= -I$(COMMON_DIR)
 

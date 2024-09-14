@@ -6,6 +6,7 @@ SECTIONS {
     .text : {
         _start = 0x023B0000;
         KEEP(*(.text.main))
+        KEEP(*(.text.main_thumb))
         *(.text.startup)
         *(.text*)
         . = ALIGN(4);
