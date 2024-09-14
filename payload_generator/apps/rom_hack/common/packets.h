@@ -4,13 +4,9 @@
 #include "common.h"
 #include "functions.h"
 
-#define PACKET_BUFF_ADDRESS (PACKET *) 0x23B8000
-
 #ifndef PACKET_SIZE // PACKET_SIZE may be modified
-#define PACKET_SIZE 292
+#define PACKET_SIZE  292
 #endif
-
-#define fetchPacket fetchPokemonResult // use Pokemon result API as packet data
 
 enum {
     TYPE_NONE,
@@ -20,14 +16,20 @@ enum {
 
 typedef struct {
     u8 packetType;
+	u8 requestNext;
+	u16 padding;
     u32 packetId;
-    BOOL requestNext;
 } PACKET_HEADER;
 
 typedef struct {
     PACKET_HEADER header;
     u8 data[ PACKET_SIZE - sizeof(PACKET_HEADER)];
 } PACKET;
+
+typedef struct {
+	u8 http_header[0xD4];
+	PACKET packet;
+} HTTP_PACKET;
 
 typedef struct {
     PACKET_HEADER header;
@@ -48,10 +50,16 @@ typedef struct {
     CODE_PACKET_HEADER header;
     u8 data[ PACKET_SIZE - sizeof(CODE_PACKET_HEADER)];
 } CODE_PACKET;
+#define RCV_PACKET_BUFF_ADDRESS (HTTP_PACKET *) 0x23B0000
+
+static inline void fetchPacket(HTTP_PACKET *packet) { fetchPokemonResult(packet); }
+static inline void sendPacket(PACKET *packet) { sendPokemonResult(packet); }
+static inline u32 downloadPacket(HTTP_PACKET *packet);
+static inline u32 uploadPacket(PACKET *packet);
+static inline u32 handleAsync();
 
 void handlePackets();
 BOOL handlePacket(PACKET *packet);
-BOOL handleDataPacket(DATA_PACKET *packet);
 BOOL handleDataPacket(DATA_PACKET *packet);
 BOOL handleCodePacket(CODE_PACKET *packet);
 
