@@ -1,3 +1,4 @@
+import os
 import socket
 import threading
 import logging
@@ -8,7 +9,8 @@ import dns.resolver
 import dns.reversename
 from .loghandler import LogHandler
 
-dns_logging = LogHandler('dns_server', 'network.log', level=logging.INFO).get_logger()
+
+dns_logging = LogHandler('dns_server', 'network.log', level=logging.DEBUG).get_logger()
 
 class DNSServer:
     def __init__(self, dns_ip:str="178.62.43.212") -> None:
@@ -23,7 +25,8 @@ class DNSServer:
     def get_proxy_ip(self) -> str:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect((self.dns_ip, 53))
-        s_name = s.getsockname()[0]
+        s_name = os.environ.get('HOST_IP_ADDRESS').replace(' ', '')
+        assert s_name
         return s_name
 
 

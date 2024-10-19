@@ -1,5 +1,5 @@
 @ Inject overlay payload
-@ Makes LoadOverlay execute from 0x23B0000 after copying overlays
+@ Makes LoadOverlay execute from 0x023a9320 after copying overlays
 
 @ r3, r4 and lr are already on the stack
 
@@ -22,6 +22,6 @@ pop {r0-r4, pc}
 
 _data:
 .word 0x020d75d8                    @ return instruction of LoadOverlay
-.word 0x23b0000                     @ destination buffer address
-.word 0xea0b6288                    @ branch instruction to 0x23B0000 relative to 0x020d75d8
-.word 0x20ce3e0                     @ memcp_uint8
+.word 0x023a9320                    @ destination buffer address
+.word 0xea0b4750                    @ branch instruction to 0x023a9320 relative to 0x020d75d8
+.word 0x020ce3e0                    @ memcp_uint8

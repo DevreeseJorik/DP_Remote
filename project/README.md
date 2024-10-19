@@ -8,7 +8,8 @@ a copy of Pokémon Diamond/Pearl and execute it.
 Building requires Docker, VS Code, and the Remote Development extension.
 ### Opening the directory inside the container
 Follow these steps to open the directory inside the container:
-1. Download or clone this repository and open the directory in VSCode.
+1. Download or clone this repository and open the `payload_generator` directory in VSCode.
+   It will not work if you have the root of the repository open!
 2. Press [F1] to open the command palette.
 3. Search for "Dev Containers: Reopen in Container" and press [Enter] to execute.
 ### Building

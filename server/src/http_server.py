@@ -1,11 +1,13 @@
 from flask import Flask, Response, request
 from flask_classful import FlaskView, route
-from .payload_handler import PayloadHandler
+
+from .payload_handler import PayloadHandler, DumpPayloadHandler
+from .http_helper import B64SCCrypto
 from .loghandler import LogHandler
 import logging
 
-http_logging = LogHandler('http_server', 'network.log', level=logging.INFO).get_logger()
-gts_logging = LogHandler('gts_server', 'network.log', level=logging.INFO).get_logger()
+http_logging = LogHandler('http_server', 'network.log', level=logging.DEBUG).get_logger()
+gts_logging = LogHandler('gts_server', 'network.log', level=logging.DEBUG).get_logger()
 
 werkzeug_logging = logging.getLogger('werkzeug')
 werkzeug_logging.setLevel(logging.ERROR)
@@ -49,6 +51,7 @@ class GTSServer(FlaskView):
     def __init__(self):
         self.token = 'c9KcX1Cry3QKS2Ai7yxL6QiQGeBGeQKR'
         self.payload_handler = PayloadHandler()
+        self.b64sc = B64SCCrypto()
 
     @route('/info.asp', methods=['GET'])
     def info(self):
@@ -61,6 +64,9 @@ class GTSServer(FlaskView):
 
     @route('/post.asp', methods=['GET'])
     def post(self):
+        data = self.b64sc.decrypt(request.args.get('data'))
+        gts_logging.info(f"POST data: {data.hex()}")
+        self.payload_handler.handle_post(data)
         return GTSResponse(b'\x0c\x00')
 
     @route('/search.asp', methods=['GET'])
@@ -69,8 +75,7 @@ class GTSServer(FlaskView):
 
     @route('/result.asp', methods=['GET'])
     def result(self):
-        payload_choice = input('Enter payload path: ')
-        payload = self.payload_handler.get_payload(payload_choice)
+        payload = self.payload_handler.get_payload()
         return GTSResponse(payload)
 
     @route('/delete.asp', methods=['GET'])

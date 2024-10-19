@@ -1,0 +1,91 @@
+[
+    {
+      "title": "Remote payload injection",
+      "color": "62, 147, 63",
+      "language": "English",
+      "input_fields": [
+        {
+          "type": "command",
+          "name": "Nop",
+          "parameters": []
+        },
+        {
+          "type": "command",
+          "name": "LoadAdrsValue",
+          "parameters": [
+            {
+              "name": "address",
+              "type": "text",
+              "value": "[FUN_EvCmdNameInStone] + 0x1"
+            },
+            {
+              "name": "value",
+              "type": "text",
+              "value": "0x47"
+            }
+          ]
+        },
+        {
+          "type": "command",
+          "name": "BicycleReq",
+          "parameters": [
+            {
+              "name": "flag",
+              "type": "text",
+              "value": "0x1"
+            }
+          ]
+        },
+        {
+          "type": "memory_editor",
+          "memory": [
+            "0x71",
+            "0x02"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "language": "All",
+          "name": "byte_code_offset",
+          "value": "0x0"
+        },
+        {
+          "language": "English",
+          "name": "FUN_EvCmdNameInStone",
+          "value": "0x0203c58c"
+        },
+        {
+          "language": "French",
+          "name": "FUN_EvCmdNameInStone",
+          "value": "0x203C5D4"
+        },
+        {
+          "language": "German",
+          "name": "FUN_EvCmdNameInStone",
+          "value": "0x203C5D4"
+        },
+        {
+          "language": "Italian",
+          "name": "FUN_EvCmdNameInStone",
+          "value": "0x203C5D4"
+        },
+        {
+          "language": "Spanish",
+          "name": "FUN_EvCmdNameInStone",
+          "value": "0x203C5D4"
+        },
+        {
+          "language": "Japanese Rev5",
+          "name": "FUN_EvCmdNameInStone",
+          "value": "0x203F75C"
+        },
+        {
+          "language": "Japanese Rev6",
+          "name": "FUN_EvCmdNameInStone",
+          "value": "0x203F800"
+        }
+      ],
+      "documentation": ""
+    }
+  ]
