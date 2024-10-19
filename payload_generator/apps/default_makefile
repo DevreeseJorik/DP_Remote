@@ -2,7 +2,8 @@
 NAME            = default_makefile
 
 # The directory containing .s files
-SRCDIR          = $(CURDIR)/asm
+SRCDIR          = $(CURDIR)/src
+POSTBUILDSCRIPT = $(CURDIR)/post_build.sh
 
 # The build directory
 BUILDDIR        = $(CURDIR)/build
@@ -27,7 +28,7 @@ BINS            = $(patsubst $(SRCDIR)/%.s, $(BUILDDIR)/%.bin, $(SOURCES))
 # ===================================================================================================
 
 # Default target: build everything
-all: clean $(BUILDDIR) $(BINS)
+all: clean $(BUILDDIR) $(BINS) $(POSTBUILDSCRIPT)
 
 # Create the build directory if it doesn't exist
 $(BUILDDIR):
@@ -38,6 +39,11 @@ $(BUILDDIR)/%.bin: $(SRCDIR)/%.s | $(BUILDDIR)
 	$(CC) $< -o $(BUILDDIR)/$* $(CFLAGS) $(LDFLAGS)
 	arm-none-eabi-objcopy -O binary $(BUILDDIR)/$* $@
 	arm-none-eabi-objdump -d $(BUILDDIR)/$* > $(BUILDDIR)/$*.elf
+
+$(POSTBUILDSCRIPT):
+	if [ -f $(POSTBUILDSCRIPT) ]; then \
+		$(POSTBUILDSCRIPT); \
+	fi
 
 # Clean the build directory
 clean:

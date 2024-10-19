@@ -1,11 +1,12 @@
-#ifndef _PACKETS_H
-#define _PACKETS_H
+#ifndef _COMMUNICATION_H
+#define _COMMUNICATION_H
 
 #include "common.h"
 #include "functions.h"
 
+#define DEFAULT_PACKET_SIZE 292
 #ifndef PACKET_SIZE // PACKET_SIZE may be modified
-#define PACKET_SIZE  292
+#define PACKET_SIZE  1024
 #endif
 
 enum {
@@ -76,5 +77,6 @@ BOOL handlePacket(PACKET *packet);
 BOOL handleDataPacket(DATA_PACKET *packet);
 BOOL handleCodePacket(CODE_PACKET *packet);
 BOOL handleDumpPacket(DUMP_PACKET *packet);
+BOOL setPacketSizes();
 
-#endif // _PACKETS_H
+#endif // _COMMUNICATION_H

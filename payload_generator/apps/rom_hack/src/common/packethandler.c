@@ -1,4 +1,4 @@
-#include "packets.h"
+#include "packethandler.h"
 
 void handlePackets() {
     HTTP_PACKET *rcvPacketHTTP = RCV_PACKET_BUFF_ADDRESS;
@@ -70,4 +70,20 @@ BOOL handleDumpPacket(DUMP_PACKET *packet) {
 
     uploadPacket(packet->header.dump_address);
     return TRUE;
+}
+
+__attribute__((naked))
+BOOL setPacketSizes() {
+    // upload
+    *(u16*)0x0222dbcc = 0x4a0f;
+    *(u16*)0x0222dbe0 = 0x4b1f; 
+    *(u16*)0x0222dbe2 = 0x4a0a;
+
+    *(u32*)0x0222dc0c = PACKET_SIZE;
+
+    // download
+    *(u16*)0x0222dcc8 = 0x4a0d;
+    *(u16*)0x0222dcce = 0x491c;
+
+    *(u32*)0x0222dd00 = PACKET_SIZE;  
 }

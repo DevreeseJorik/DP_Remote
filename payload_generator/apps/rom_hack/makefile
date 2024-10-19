@@ -1,45 +1,43 @@
 # ===================================================================================================
-NAME            = rom_hack
 
-SOURCE_DIR		= $(CURDIR)/src
-COMMON_DIR		= $(CURDIR)/common
-SOURCE 			= $(SOURCE_DIR)/rom_hack.c
-COMMON_SRC      = $(wildcard $(COMMON_DIR)/*.c)
+SRCDIR = $(CURDIR)/src
+OUTDIR = $(CURDIR)/build
+OUTDIR_BIN = $(OUTDIR)
+OUTDIR_ELF = $(OUTDIR)
+SUBDIRS = $(shell find $(SRCDIR) -maxdepth 1 -type d | grep -vE "^$(SRCDIR)$$")
 
+# ===================================================================================================
 
-SYMBOLFILE		= $(SOURCE_DIR)/symbols.sym
-LINKERFILE		= $(SOURCE_DIR)/linker.ld
+all: clean $(OUTDIR) $(OUTDIR_BIN) $(OUTDIR_ELF) echo_build_dirs build_subdirs 
 
-BUILDDIR		= ./build
+$(OUTDIR):
+	mkdir -p $(OUTDIR)
 
-CC				= arm-none-eabi-gcc
-AS				= arm-none-eabi-as
-CFLAGS			= -mcpu=arm946e-s -mthumb -Os -nostartfiles -nodefaultlibs -fno-builtin -ffunction-sections --data-sections -Wl,--gc-sections
-LDFLAGS			= --specs=nosys.specs -T $(LINKERFILE)
-INC				= -I$(COMMON_DIR)
+$(OUTDIR_BIN):
+	mkdir -p $(OUTDIR_BIN)
 
-LDFLAGS			+= -Wl,--just-symbols=$(SYMBOLFILE)
-LIB				=
+$(OUTDIR_ELF):
+	mkdir -p $(OUTDIR_ELF)
 
-COMMON_OBJS      = $(COMMON_SRC:$(COMMON_DIR)/%.c=$(BUILDDIR)/%.o)
+echo_build_dirs:
+	@echo $(SUBDIRS)
 
-MAIN_OBJ         = $(BUILDDIR)/rom_hack.o
-
-all: clean $(BUILDDIR) $(BUILDDIR)/$(NAME)
-
-$(BUILDDIR)/%.o: $(COMMON_DIR)/%.c
-	$(CC) $(CFLAGS) $(INC) -c $< -o $@
-
-$(MAIN_OBJ): $(SOURCE)
-	$(CC) $(CFLAGS) $(INC) -c $(SOURCE) -o $(MAIN_OBJ)
-
-$(BUILDDIR)/$(NAME): $(COMMON_OBJS) $(MAIN_OBJ)
-	$(CC) $(CFLAGS) $(INC) $(LDFLAGS) $(COMMON_OBJS) $(MAIN_OBJ) -o $(BUILDDIR)/$(NAME) $(LIB)
-	arm-none-eabi-objcopy -O binary $(BUILDDIR)/$(NAME) $(BUILDDIR)/$(NAME).bin
-	arm-none-eabi-objdump -d $(BUILDDIR)/$(NAME) > $(BUILDDIR)/$(NAME).elf
-
-$(BUILDDIR):
-	mkdir -p $(BUILDDIR)
+build_subdirs:
+	for dir in $(SUBDIRS); do \
+		if [ -f $$dir/Makefile ] || [ -f $$dir/makefile ]; then \
+			$(MAKE) -C $$dir; \
+		cp $$dir/build/*.bin $(OUTDIR_BIN)/; \
+		cp $$dir/build/*.elf $(OUTDIR_ELF)/; \
+	done
 
 clean:
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(OUTDIR_BIN)
+	rm -rf $(OUTDIR_ELF)
+
+	for dir in $(SUBDIRS); do \
+		if [ -f $$dir/Makefile ] || [ -f $$dir/makefile ]; then \
+			$(MAKE) -C $$dir clean; \
+		else \
+			$(MAKE) -f $(DEFAULT_MAKEFILE) -C $$dir clean; \
+		fi; \
+	done
