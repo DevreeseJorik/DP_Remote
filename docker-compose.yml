@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+      - "53:53/tcp"
+      - "53:53/udp"
+    volumes:
+      - ./server:/home/server
+      - ./project:/home/project
+    environment:
+      HOST_IP_ADDRESS: ${HOST_IP_ADDRESS}
+    tty: true
+    working_dir: /home
+    command: >
+        bash -c "if [ \"$PROD_MODE\" == \"true\" ]; then python3 /home/server/main.py; else tail -f /dev/null; fi"
