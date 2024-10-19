@@ -36,6 +36,7 @@ clean:
 
 	for dir in $(SUBDIRS); do \
 		if [ -f $$dir/Makefile ] || [ -f $$dir/makefile ]; then \
+			echo "???" \
 			$(MAKE) -C $$dir clean; \
 		else \
 			$(MAKE) -f $(DEFAULT_MAKEFILE) -C $$dir clean; \
