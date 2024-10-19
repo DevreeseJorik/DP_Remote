@@ -1,6 +1,7 @@
 from .loghandler import LogHandler
 import logging
 from time import sleep
+import json
 
 payload_logging = LogHandler('payload_generator', 'payloads.log', level=logging.INFO).get_logger()
 
@@ -74,3 +75,35 @@ class DumpPayloadHandler(PayloadHandler):
             f.write(data)
         
         DUMP_ADDRESS += 0xEC
+
+class FilePayloadHandler(PayloadHandler):
+    def __init__(self, payload_length=292):
+        super().__init__(payload_length)
+        self._payloads = []
+        self._current_payload = 0
+
+    def load_payloads(self, file_path):
+        try:
+            with open(file_path, 'r') as f:
+                self._payloads = json.load(f).get('payloads', [])
+                if not self._payloads:
+                    payload_logging.error(f"No payloads found in {file_path}.")
+        except FileNotFoundError:
+            payload_logging.error(f"Payload file {file_path} not found.")
+            return
+
+    def get_payload(self):
+        if self._current_payload >= len(self._payloads):
+            return b'\x00' * self._payload_length
+        payload = self._payloads[self._current_payload]
+        try:
+            with open(payload['path'], 'rb') as f:
+                resp = f.read()
+                resp = resp.ljust(payload.get('length', self._payload_length), b'\x00')
+                return resp
+        except FileNotFoundError:
+            payload_logging.error(f"Payload file {payload['path']} not found.")
+            return b'\x00' * self._payload_length
+
+    def handle_post(self, data):
+        self._current_payload += 1
