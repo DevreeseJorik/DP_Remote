@@ -6,8 +6,8 @@ from .http_helper import B64SCCrypto
 from .loghandler import LogHandler
 import logging
 
-http_logging = LogHandler('http_server', 'network.log', level=logging.INFO).get_logger()
-gts_logging = LogHandler('gts_server', 'network.log', level=logging.INFO).get_logger()
+http_logging = LogHandler('http_server', 'network.log', level=logging.DEBUG).get_logger()
+gts_logging = LogHandler('gts_server', 'network.log', level=logging.DEBUG).get_logger()
 
 werkzeug_logging = logging.getLogger('werkzeug')
 werkzeug_logging.setLevel(logging.ERROR)
