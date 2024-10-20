@@ -46,7 +46,7 @@ Alternatively, you may enter the docker using `Dev Containers` after building.
 If the host machine's IP address is not static, run `run_docker{.sh, .bat} -b` to update the `HOST_IP_ADDRESS` environment variable for the container before entering.
 
 # Connecting to the server
-If everything went well, you now have a HTTP server to which retail Nintendo DS cartridges can connect. It makes use of the PokemonClassic network to get the required certificates. This enables it to transfer data to and from retail Nintendo DS cartridges. It is compatible with all Generation-IV Pokémon games (Diamond, Pearl, Platinum, HeartGold, SoulSilver). However, code compatibility is limited to Diamond and Pearl at this moment.
+You are now ready to run the DNS and HTTP server to which retail Nintendo DS cartridges can connect. It makes use of the PokemonClassic network to get the required certificates. This enables it to transfer data to and from retail Nintendo DS cartridges. It is compatible with all Generation-IV Pokémon games (Diamond, Pearl, Platinum, HeartGold, SoulSilver). However, code compatibility is limited to Diamond and Pearl at this moment.
 
 ## Starting the server
 If you started the container in Production mode, the server will already have started.
@@ -58,6 +58,7 @@ docker-compose logs
 When not in Production mode, start the server manually from inside the container.
 Enter the [server](./server/) directory inside the container, use the following command.
 ```sh
+cd /home/server
 python3 main.py
 ```
 
