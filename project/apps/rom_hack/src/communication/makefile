@@ -5,10 +5,10 @@ COMMON_DIR		= $(CURDIR)/../common
 SOURCE 			= $(CURDIR)/main.c
 COMMON_SRC      = $(wildcard $(COMMON_DIR)/*.c)
 
-SYMBOLFILE		= symbols.sym
-LINKERFILE		= linker.ld
+SYMBOLFILE		= $(CURDIR)/symbols.sym
+LINKERFILE		= $(CURDIR)/linker.ld
 
-BUILDDIR		= ./build
+BUILDDIR		= $(CURDIR)/build
 
 CC				= arm-none-eabi-gcc
 AS				= arm-none-eabi-as

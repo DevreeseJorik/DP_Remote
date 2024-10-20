@@ -26,8 +26,9 @@ build_subdirs:
 	for dir in $(SUBDIRS); do \
 		if [ -f $$dir/Makefile ] || [ -f $$dir/makefile ]; then \
 			$(MAKE) -C $$dir; \
-		cp $$dir/build/*.bin $(OUTDIR_BIN)/; \
-		cp $$dir/build/*.elf $(OUTDIR_ELF)/; \
+			cp $$dir/build/*.bin $(OUTDIR_BIN)/; \
+			cp $$dir/build/*.elf $(OUTDIR_ELF)/; \
+		fi; \
 	done
 
 clean:
@@ -36,9 +37,6 @@ clean:
 
 	for dir in $(SUBDIRS); do \
 		if [ -f $$dir/Makefile ] || [ -f $$dir/makefile ]; then \
-			echo "???" \
 			$(MAKE) -C $$dir clean; \
-		else \
-			$(MAKE) -f $(DEFAULT_MAKEFILE) -C $$dir clean; \
 		fi; \
 	done
