@@ -11,7 +11,8 @@ The repository is still work in progress, consider everything experimental and h
    - DS Family (DS, DSi, 3DS)
    - melonDS (not Bizhawk)
 
-## Hardware Requirements:
+## Device specific Requirements:
+This only applies when using DS Family devices, not necessary when using an emulator.
 - A Wireless network (WEP or passwordless)
 
 # Setting up the Game
@@ -40,7 +41,7 @@ If everything went well, you'll now have a HTTP server to which retail Nintendo 
 ## Accessing logs
 To view the output from the server, use:
 ```sh
-docker-compose logs`
+docker-compose logs
 ```
 
 If everything went well, you should see the following output:
@@ -117,11 +118,14 @@ Once the server is running, you'll want to be able to compile and send codes to 
 
 The payload generator is set up to compile C code, assembly code and create binaries for ARMvt5, the ARM version Nintendo DS uses. This code can then be sent to the games to be executed.
 
-## Building Code
+## Entering the container
 First, make sure to enter the docker interactively.
 ```sh
 run_docker{.sh, .bat} -x # .sh for Linux, MacOS .bat for Windows
 ```
+
+Alternatively, you may enter the docker using `Dev Containers` after building. 
+If the host machine's IP address is not static, run `run_docker{.sh, .bat} -b` to update the `HOST_IP_ADDRESS` environment variable for the container before entering.
 
 Enter the [project](./project/) directory.
 ```sh
@@ -129,9 +133,11 @@ cd /home/project
 ```
 
 To build, run the following command in the terminal:
-`make`
+```sh
+make
+```
 
-After the make command finishes, the necessary data will be generated under the `out` directory.
+After the make command finishes, the necessary data will be generated under the `/home/project/out` directory.
 
 **IMPORTANT!**
 When writing codes to be executed using this repository, you should be aware of the following:
