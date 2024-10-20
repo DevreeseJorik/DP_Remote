@@ -32,19 +32,36 @@ These components will be mounted into the docker after building.
 You can run the application in either production or developer mode by setting the `PROD_MODE` environment variable. By default, it runs in developer mode (`PROD_MODE=true`). The codebase is not yet ready for Production at this time. You may modify this in the `run_docker{.sh, .bat}` file for your OS.
 
 ```sh
-run_docker.{.sh, .bat} # .sh for Linux, MacOS .bat for Windows
+run_docker.{.sh, .bat} -b # .sh for Linux, MacOS .bat for Windows
 ```
 
-# Connecting to the server
-If everything went well, you'll now have a HTTP server to which retail Nintendo DS cartridges can connect. It makes use of the PokemonClassic network to get the required certificates. This enables it to transfer data to and from retail Nintendo DS cartridges. It is compatible with all Generation-IV Pokémon games (Diamond, Pearl, Platinum, HeartGold, SoulSilver). However, code compatibility is limited to Diamond and Pearl at this moment.
+## Entering the container
+This is only necessary if you're actively developing, and not in Production mode.
+To enter the docker interactively from a command line:
+```sh
+run_docker{.sh, .bat} -x # .sh for Linux, MacOS .bat for Windows
+```
 
-## Accessing logs
-To view the output from the server, use:
+Alternatively, you may enter the docker using `Dev Containers` after building. 
+If the host machine's IP address is not static, run `run_docker{.sh, .bat} -b` to update the `HOST_IP_ADDRESS` environment variable for the container before entering.
+
+# Connecting to the server
+If everything went well, you now have a HTTP server to which retail Nintendo DS cartridges can connect. It makes use of the PokemonClassic network to get the required certificates. This enables it to transfer data to and from retail Nintendo DS cartridges. It is compatible with all Generation-IV Pokémon games (Diamond, Pearl, Platinum, HeartGold, SoulSilver). However, code compatibility is limited to Diamond and Pearl at this moment.
+
+## Starting the server
+If you started the container in Production mode, the server will already have started.
+To view the output from the server, use the following command:
 ```sh
 docker-compose logs
 ```
 
-If everything went well, you should see the following output:
+When not in Production mode, start the server manually from inside the container.
+Enter the [server](./server/) directory inside the container, use the following command.
+```sh
+python3 main.py
+```
+
+In both cases the following output should be generated:
 ```sh
 app-1  | [dns_server] 2024-10-19 10:49:49 - INFO - DNSProxy server started. 
 app-1  | [dns_server] 2024-10-19 10:49:49 - INFO - Primary DNS server: <ip address>
@@ -52,7 +69,7 @@ app-1  |  * Serving Flask app 'src.http_server'
 app-1  |  * Debug mode: off
 ```
 
-The Primary DNS server IP addresss will be necessary to connect the DS game to the server.
+The `Primary DNS server IP address` will be necessary to connect the DS game to the server.
 
 ## Setting up the network: MelonDS
 The melonDS emulator has a built-in WIFI network. You need official DS firmware to use this. Refer to the [ds-homebrew-wiki](https://wiki.ds-homebrew.com/ds-index/ds-bios-firmware-dump) to dump one.
@@ -118,16 +135,7 @@ Once the server is running, you'll want to be able to compile and send codes to 
 
 The payload generator is set up to compile C code, assembly code and create binaries for ARMvt5, the ARM version Nintendo DS uses. This code can then be sent to the games to be executed.
 
-## Entering the container
-First, make sure to enter the docker interactively.
-```sh
-run_docker{.sh, .bat} -x # .sh for Linux, MacOS .bat for Windows
-```
-
-Alternatively, you may enter the docker using `Dev Containers` after building. 
-If the host machine's IP address is not static, run `run_docker{.sh, .bat} -b` to update the `HOST_IP_ADDRESS` environment variable for the container before entering.
-
-Enter the [project](./project/) directory.
+Enter the [project](./project/) directory inside the container.
 ```sh
 cd /home/project
 ```
