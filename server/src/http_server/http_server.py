@@ -1,10 +1,11 @@
+import logging
+
 from flask import Flask, Response, request
 from flask_classful import FlaskView, route
 
-from .payload_handler import PayloadHandler, DumpPayloadHandler
+from .packet_handler import PacketHandler
 from .http_helper import B64SCCrypto
-from .loghandler import LogHandler
-import logging
+from ..log_handler.log_handler import LogHandler
 
 http_logging = LogHandler('http_server', 'network.log', level=logging.DEBUG).get_logger()
 gts_logging = LogHandler('gts_server', 'network.log', level=logging.DEBUG).get_logger()
@@ -35,6 +36,7 @@ class GTSResponse(Response):
         super().__init__(response, status, headers, content_type, **kwargs)
 
 app = Flask(__name__)
+packet_handler = PacketHandler(config_path="/home/server/config.yaml")
 
 @app.before_request
 def handle_request():
@@ -49,13 +51,12 @@ class GTSServer(FlaskView):
     route_base = '/pokemondpds/worldexchange'
 
     def __init__(self):
-        self.token = 'c9KcX1Cry3QKS2Ai7yxL6QiQGeBGeQKR'
-        self.payload_handler = PayloadHandler()
         self.b64sc = B64SCCrypto()
 
     @route('/info.asp', methods=['GET'])
     def info(self):
         gts_logging.info('Connection Established.')
+        packet_handler.reset()
         return GTSResponse(b'\x01\x00')
 
     @route('/common/setProfile.asp', methods=['GET'])
@@ -66,7 +67,7 @@ class GTSServer(FlaskView):
     def post(self):
         data = self.b64sc.decrypt(request.args.get('data'))
         gts_logging.info(f"POST data: {data.hex()}")
-        self.payload_handler.handle_post(data)
+        packet_handler.handle_post(data)
         return GTSResponse(b'\x0c\x00')
 
     @route('/search.asp', methods=['GET'])
@@ -75,7 +76,7 @@ class GTSServer(FlaskView):
 
     @route('/result.asp', methods=['GET'])
     def result(self):
-        payload = self.payload_handler.get_payload()
+        payload = packet_handler.get_payload()
         return GTSResponse(payload)
 
     @route('/delete.asp', methods=['GET'])
@@ -83,6 +84,3 @@ class GTSServer(FlaskView):
         return GTSResponse(b'\x01\x00')
 
 GTSServer.register(app)
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True)

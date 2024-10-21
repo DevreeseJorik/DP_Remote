@@ -7,10 +7,10 @@ import dns.message
 import dns.query
 import dns.resolver
 import dns.reversename
-from .loghandler import LogHandler
+from ..log_handler.log_handler import LogHandler
 
 
-dns_logging = LogHandler('dns_server', 'network.log', level=logging.DEBUG).get_logger()
+dns_logging = LogHandler('dns_server', 'network.log', level=logging.INFO).get_logger()
 
 class DNSServer:
     def __init__(self, dns_ip:str="178.62.43.212") -> None:

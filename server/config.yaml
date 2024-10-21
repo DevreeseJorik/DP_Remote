@@ -1,0 +1,14 @@
+out_of_packets_timeout: 5
+packets:
+  - packet_type: none
+    filepath: "/home/project/out/bin/communication.bin"
+
+  - packet_type: code
+    filepath: "/home/project/out/bin/increase_packetsize.bin"
+    # post_update:
+    #   payload_length: 3000
+
+  - packet_type: dump
+    address: 0x2000000
+    size: 3000
+

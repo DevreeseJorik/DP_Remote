@@ -1,5 +1,5 @@
-from src.dns_server import DNSServer
-from src.http_server import app
+from src.dns_server.dns_server import DNSServer
+from src.http_server.http_server import app
 
 if __name__ == '__main__':
     dns_server = DNSServer()
