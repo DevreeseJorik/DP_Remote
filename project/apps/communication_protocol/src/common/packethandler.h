@@ -4,10 +4,8 @@
 #include "common.h"
 #include "functions.h"
 
-#define DEFAULT_PACKET_SIZE 292
-#ifndef PACKET_SIZE // PACKET_SIZE may be modified
-#define PACKET_SIZE  1024
-#endif
+#define PACKET_SIZE 292
+#define CUSTOM_PACKET_SIZE 3000
 
 enum {
     TYPE_NONE,

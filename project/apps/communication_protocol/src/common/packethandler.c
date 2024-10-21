@@ -9,8 +9,7 @@ void handlePackets() {
         result = downloadPacket(rcvPacketHTTP);
         switch (result) {
             case 1:
-                handlePacket(rcvPacket);
-                if (!rcvPacket->header.requestNext)
+                if (!handlePacket(rcvPacket) || !rcvPacket->header.requestNext)
                     return;
             default:
                 break;
@@ -72,18 +71,17 @@ BOOL handleDumpPacket(DUMP_PACKET *packet) {
     return TRUE;
 }
 
-__attribute__((naked))
 BOOL setPacketSizes() {
     // upload
-    *(u16*)0x0222dbcc = 0x4a0f;
+    // *(u16*)0x0222dbcc = 0x4a0f;
     *(u16*)0x0222dbe0 = 0x4b1f; 
-    *(u16*)0x0222dbe2 = 0x4a0a;
+    // *(u16*)0x0222dbe2 = 0x4a0a;
 
-    *(u32*)0x0222dc0c = PACKET_SIZE;
+    // *(u32*)0x0222dc0c = CUSTOM_PACKET_SIZE;
 
     // download
-    *(u16*)0x0222dcc8 = 0x4a0d;
-    *(u16*)0x0222dcce = 0x491c;
+    // *(u16*)0x0222dcc8 = 0x4a0d;
+    // *(u16*)0x0222dcce = 0x491c;
 
-    *(u32*)0x0222dd00 = PACKET_SIZE;  
+    // *(u32*)0x0222dd00 = CUSTOM_PACKET_SIZE;  
 }
